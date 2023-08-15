@@ -15,13 +15,54 @@ class MainApp extends StatelessWidget {
       ['back', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'enter'],
     ];
 
-    final width = MediaQuery.sizeOf(context).width / 10;
+    final card = [
+      [{}, {}, {}, {}, {}],
+      [{}, {}, {}, {}, {}],
+      [{}, {}, {}, {}, {}],
+      [{}, {}, {}, {}, {}],
+      [{}, {}, {}, {}, {}],
+      [{}, {}, {}, {}, {}],
+    ];
+    final width = MediaQuery.sizeOf(context).width;
+    final keyWidth = width / 10;
+    final cardWidth = width / 6;
 
     return MaterialApp(
       home: Scaffold(
         body: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: card
+                    .map(
+                      (e) => Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: e
+                            .map(
+                              (e) => SizedBox(
+                                width: cardWidth,
+                                height: cardWidth,
+                                child: Card(
+                                  child: Center(
+                                    child: Text(
+                                      (e['text'] as String? ?? '')
+                                          .toUpperCase(),
+                                      style: const TextStyle(
+                                        fontSize: 28,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
             Column(
               children: keys
                   .map(
@@ -31,9 +72,9 @@ class MainApp extends StatelessWidget {
                           .map(
                             (e) => SizedBox(
                               width: ['enter', 'back'].contains(e)
-                                  ? width * 1.5
-                                  : width,
-                              height: width * 1.6,
+                                  ? keyWidth * 1.5
+                                  : keyWidth,
+                              height: keyWidth * 1.6,
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 3,
