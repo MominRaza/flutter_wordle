@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 
@@ -40,13 +42,44 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final wordle = ['i', 'n', 'd', 'i', 'a'];
+  final wordle = dictionary[Random().nextInt(dictionary.length)].split('');
   int length = 0;
   List<String> guess = [];
   final keys = [
-    ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
-    ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
-    ['back', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'enter'],
+    [
+      {'text': 'q'},
+      {'text': 'w'},
+      {'text': 'e'},
+      {'text': 'r'},
+      {'text': 't'},
+      {'text': 'y'},
+      {'text': 'u'},
+      {'text': 'i'},
+      {'text': 'o'},
+      {'text': 'p'},
+    ],
+    [
+      {'text': 'a'},
+      {'text': 's'},
+      {'text': 'd'},
+      {'text': 'f'},
+      {'text': 'g'},
+      {'text': 'h'},
+      {'text': 'j'},
+      {'text': 'k'},
+      {'text': 'l'},
+    ],
+    [
+      {'text': 'back'},
+      {'text': 'z'},
+      {'text': 'x'},
+      {'text': 'c'},
+      {'text': 'v'},
+      {'text': 'b'},
+      {'text': 'n'},
+      {'text': 'm'},
+      {'text': 'enter'},
+    ],
   ];
 
   final card = [
@@ -97,17 +130,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Text(
                                     (e['text'] as String? ?? '').toUpperCase(),
                                     style: TextStyle(
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.bold,
-                                        color: e['match'] == null
-                                            ? null
-                                            : (e['match'] as String) ==
-                                                    'UNMATCHED'
-                                                ? Colors.white
-                                                : (e['match'] as String) ==
-                                                        'PARTIAL'
-                                                    ? Colors.black
-                                                    : null),
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold,
+                                      color: e['match'] == null
+                                          ? null
+                                          : (e['match'] as String) ==
+                                                  'UNMATCHED'
+                                              ? Colors.white
+                                              : (e['match'] as String) ==
+                                                      'PARTIAL'
+                                                  ? Colors.black
+                                                  : null,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -122,12 +156,12 @@ class _HomeScreenState extends State<HomeScreen> {
           Column(
             children: keys
                 .map(
-                  (e) => Row(
+                  (k) => Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: e
+                    children: k
                         .map(
-                          (e) => SizedBox(
-                            width: ['enter', 'back'].contains(e)
+                          (key) => SizedBox(
+                            width: ['enter', 'back'].contains(key['text'])
                                 ? keyWidth * 1.5
                                 : keyWidth,
                             height: keyWidth * 1.6,
@@ -137,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 horizontal: 2,
                               ),
                               child: FilledButton.tonal(
-                                onPressed: e == 'enter'
+                                onPressed: key['text'] == 'enter'
                                     ? guess.isNotEmpty && guess.length % 5 == 0
                                         ? () {
                                             if (!dictionary
@@ -174,6 +208,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   : wordle.contains(guess[i])
                                                       ? 'PARTIAL'
                                                       : 'UNMATCHED';
+
+                                              for (var element in keys) {
+                                                for (var element in element) {
+                                                  if (element['text'] ==
+                                                          guess[i] &&
+                                                      element['match'] !=
+                                                          'MATCHED') {
+                                                    element['match'] =
+                                                        guess[i] == wordle[i]
+                                                            ? 'MATCHED'
+                                                            : wordle.contains(
+                                                                    guess[i])
+                                                                ? 'PARTIAL'
+                                                                : 'UNMATCHED';
+                                                  }
+                                                }
+                                              }
                                             }
 
                                             if (listEquals(wordle, guess)) {
@@ -201,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             });
                                           }
                                         : null
-                                    : e == 'back'
+                                    : key['text'] == 'back'
                                         ? guess.isNotEmpty
                                             ? () {
                                                 setState(() {
@@ -221,17 +272,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ? null
                                                 : () {
                                                     setState(() {
-                                                      guess.add(e);
+                                                      guess.add(key['text']!);
                                                       length++;
-                                                      card[(length - 1) ~/ 5][
-                                                              ((length % 5) -
-                                                                          1) ==
-                                                                      -1
-                                                                  ? 4
-                                                                  : (length %
-                                                                          5) -
-                                                                      1]
-                                                          ['text'] = e;
+                                                      card[(length - 1) ~/
+                                                              5][((length % 5) -
+                                                                      1) ==
+                                                                  -1
+                                                              ? 4
+                                                              : (length % 5) -
+                                                                  1]['text'] =
+                                                          key['text'];
                                                     });
                                                   },
                                 style: ButtonStyle(
@@ -243,16 +293,37 @@ class _HomeScreenState extends State<HomeScreen> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
+                                  backgroundColor: key['match'] != null
+                                      ? MaterialStatePropertyAll(
+                                          key['match'] == 'MATCHED'
+                                              ? Colors.green
+                                              : key['match'] == 'PARTIAL'
+                                                  ? Colors.yellow
+                                                  : key['match'] == 'UNMATCHED'
+                                                      ? Colors.black
+                                                      : null,
+                                        )
+                                      : null,
                                 ),
-                                child: e == 'enter'
+                                child: key['text'] == 'enter'
                                     ? const Icon(Icons.keyboard_return)
-                                    : e == 'back'
+                                    : key['text'] == 'back'
                                         ? const Icon(Icons.backspace_outlined)
                                         : Text(
-                                            e.toUpperCase(),
-                                            style: const TextStyle(
+                                            key['text']!.toUpperCase(),
+                                            style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 22,
+                                              color: key['match'] == null
+                                                  ? null
+                                                  : (key['match'] as String) ==
+                                                          'UNMATCHED'
+                                                      ? Colors.white
+                                                      : (key['match']
+                                                                  as String) ==
+                                                              'PARTIAL'
+                                                          ? Colors.black
+                                                          : null,
                                             ),
                                           ),
                               ),
