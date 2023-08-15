@@ -38,6 +38,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final wordle = ['i', 'n', 'd', 'i', 'a'];
+  final dictionary = ['india', 'world', 'music', 'video', 'funny'];
   int length = 0;
   List<String> guess = [];
   final keys = [
@@ -137,6 +138,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                 onPressed: e == 'enter'
                                     ? guess.isNotEmpty && guess.length % 5 == 0
                                         ? () {
+                                            if (!dictionary
+                                                .contains(guess.join())) {
+                                              ScaffoldMessenger.of(context)
+                                                  .hideCurrentSnackBar();
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: const Text(
+                                                    'Not in word list',
+                                                  ),
+                                                  duration: const Duration(
+                                                    seconds: 1,
+                                                  ),
+                                                  behavior:
+                                                      SnackBarBehavior.floating,
+                                                  margin: EdgeInsets.fromLTRB(
+                                                    15.0,
+                                                    5.0,
+                                                    15.0,
+                                                    10.0 + keyWidth * 1.6 * 3,
+                                                  ),
+                                                ),
+                                              );
+                                              return;
+                                            }
+
                                             setState(() {
                                               for (var i = 0; i < 5; i++) {
                                                 card[(length - 1) ~/ 5][i]
