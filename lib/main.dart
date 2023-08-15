@@ -37,6 +37,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final wordle = ['i', 'n', 'd', 'i', 'a'];
   int length = 0;
   List<String> guess = [];
   final keys = [
@@ -79,13 +80,31 @@ class _HomeScreenState extends State<HomeScreen> {
                               width: cardWidth,
                               height: cardWidth,
                               child: Card(
+                                color: e['match'] == null
+                                    ? null
+                                    : (e['match'] as String) == 'MATCHED'
+                                        ? Colors.green
+                                        : (e['match'] as String) == 'PARTIAL'
+                                            ? Colors.yellow
+                                            : (e['match'] as String) ==
+                                                    'UNMATCHED'
+                                                ? Colors.black
+                                                : null,
                                 child: Center(
                                   child: Text(
                                     (e['text'] as String? ?? '').toUpperCase(),
-                                    style: const TextStyle(
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: TextStyle(
+                                        fontSize: 28,
+                                        fontWeight: FontWeight.bold,
+                                        color: e['match'] == null
+                                            ? null
+                                            : (e['match'] as String) ==
+                                                    'UNMATCHED'
+                                                ? Colors.white
+                                                : (e['match'] as String) ==
+                                                        'PARTIAL'
+                                                    ? Colors.black
+                                                    : null),
                                   ),
                                 ),
                               ),
@@ -119,6 +138,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ? guess.isNotEmpty && guess.length % 5 == 0
                                         ? () {
                                             setState(() {
+                                              for (var i = 0; i < 5; i++) {
+                                                card[(length - 1) ~/ 5][i]
+                                                    ['match'] = guess[i] ==
+                                                        wordle[i]
+                                                    ? 'MATCHED'
+                                                    : wordle.contains(guess[i])
+                                                        ? 'PARTIAL'
+                                                        : 'UNMATCHED';
+                                              }
                                               guess = [];
                                             });
                                           }
