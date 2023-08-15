@@ -27,25 +27,35 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({
+    super.key,
+  });
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int length = 0;
+  List<String> guess = [];
+  final keys = [
+    ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+    ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+    ['back', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'enter'],
+  ];
+
+  final card = [
+    [{}, {}, {}, {}, {}],
+    [{}, {}, {}, {}, {}],
+    [{}, {}, {}, {}, {}],
+    [{}, {}, {}, {}, {}],
+    [{}, {}, {}, {}, {}],
+    [{}, {}, {}, {}, {}],
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final keys = [
-      ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
-      ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
-      ['back', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'enter'],
-    ];
-
-    final card = [
-      [{}, {}, {}, {}, {}],
-      [{}, {}, {}, {}, {}],
-      [{}, {}, {}, {}, {}],
-      [{}, {}, {}, {}, {}],
-      [{}, {}, {}, {}, {}],
-      [{}, {}, {}, {}, {}],
-    ];
     final width = MediaQuery.sizeOf(context).width;
     final keyWidth = width / 10;
     final cardWidth = width / 6;
@@ -105,7 +115,47 @@ class HomeScreen extends StatelessWidget {
                                 horizontal: 2,
                               ),
                               child: FilledButton.tonal(
-                                onPressed: () {},
+                                onPressed: e == 'enter'
+                                    ? guess.isNotEmpty && guess.length % 5 == 0
+                                        ? () {
+                                            setState(() {
+                                              guess = [];
+                                            });
+                                          }
+                                        : null
+                                    : e == 'back'
+                                        ? guess.isNotEmpty
+                                            ? () {
+                                                setState(() {
+                                                  guess.removeLast();
+                                                  card[(length - 1) ~/ 5][
+                                                      ((length % 5) - 1) == -1
+                                                          ? 4
+                                                          : (length % 5) -
+                                                              1]['text'] = '';
+                                                  length--;
+                                                });
+                                              }
+                                            : null
+                                        : length >= 30
+                                            ? null
+                                            : guess.length == 5
+                                                ? null
+                                                : () {
+                                                    setState(() {
+                                                      guess.add(e);
+                                                      length++;
+                                                      card[(length - 1) ~/ 5][
+                                                              ((length % 5) -
+                                                                          1) ==
+                                                                      -1
+                                                                  ? 4
+                                                                  : (length %
+                                                                          5) -
+                                                                      1]
+                                                          ['text'] = e;
+                                                    });
+                                                  },
                                 style: ButtonStyle(
                                   padding: const MaterialStatePropertyAll(
                                     EdgeInsets.zero,
