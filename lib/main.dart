@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 
+import 'dictionary.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -39,7 +41,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final wordle = ['i', 'n', 'd', 'i', 'a'];
-  final dictionary = ['india', 'world', 'music', 'video', 'funny', 'happy'];
   int length = 0;
   List<String> guess = [];
   final keys = [
