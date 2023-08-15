@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 
 void main() {
@@ -38,7 +39,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final wordle = ['i', 'n', 'd', 'i', 'a'];
-  final dictionary = ['india', 'world', 'music', 'video', 'funny'];
+  final dictionary = ['india', 'world', 'music', 'video', 'funny', 'happy'];
   int length = 0;
   List<String> guess = [];
   final keys = [
@@ -164,16 +165,37 @@ class _HomeScreenState extends State<HomeScreen> {
                                               return;
                                             }
 
+                                            for (var i = 0; i < 5; i++) {
+                                              card[(length - 1) ~/ 5][i]
+                                                  ['match'] = guess[i] ==
+                                                      wordle[i]
+                                                  ? 'MATCHED'
+                                                  : wordle.contains(guess[i])
+                                                      ? 'PARTIAL'
+                                                      : 'UNMATCHED';
+                                            }
+
+                                            if (listEquals(wordle, guess)) {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    AlertDialog(
+                                                  title: const Text('You win'),
+                                                  content: const Text(
+                                                      '''ApnaPan Worldle 001 3/6
+                                                          🟩🟨⬛'''),
+                                                  actions: [
+                                                    FilledButton.tonal(
+                                                      onPressed: () {},
+                                                      child:
+                                                          const Text('Share'),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            }
+
                                             setState(() {
-                                              for (var i = 0; i < 5; i++) {
-                                                card[(length - 1) ~/ 5][i]
-                                                    ['match'] = guess[i] ==
-                                                        wordle[i]
-                                                    ? 'MATCHED'
-                                                    : wordle.contains(guess[i])
-                                                        ? 'PARTIAL'
-                                                        : 'UNMATCHED';
-                                              }
                                               guess = [];
                                             });
                                           }
