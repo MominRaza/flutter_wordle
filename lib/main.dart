@@ -100,6 +100,22 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Flutter Wordle'),
+        actions: length <= 25
+            ? null
+            : [
+                IconButton(
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Hint'),
+                      content: Text(
+                        wordle.join(''),
+                      ),
+                    ),
+                  ),
+                  icon: const Icon(Icons.tips_and_updates_outlined),
+                )
+              ],
       ),
       body: Column(
         children: [
