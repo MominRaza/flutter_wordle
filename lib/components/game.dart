@@ -16,54 +16,15 @@ class Game extends StatefulWidget {
 }
 
 class _GameState extends State<Game> {
-  final wordle = dictionary[Random().nextInt(dictionary.length)].split('');
-  int length = 0;
-  List<String> guess = [];
-  final keys = [
-    [
-      {'text': 'q'},
-      {'text': 'w'},
-      {'text': 'e'},
-      {'text': 'r'},
-      {'text': 't'},
-      {'text': 'y'},
-      {'text': 'u'},
-      {'text': 'i'},
-      {'text': 'o'},
-      {'text': 'p'},
-    ],
-    [
-      {'text': 'a'},
-      {'text': 's'},
-      {'text': 'd'},
-      {'text': 'f'},
-      {'text': 'g'},
-      {'text': 'h'},
-      {'text': 'j'},
-      {'text': 'k'},
-      {'text': 'l'},
-    ],
-    [
-      {'text': 'back'},
-      {'text': 'z'},
-      {'text': 'x'},
-      {'text': 'c'},
-      {'text': 'v'},
-      {'text': 'b'},
-      {'text': 'n'},
-      {'text': 'm'},
-      {'text': 'enter'},
-    ],
-  ];
+  late List<String> wordle, guess;
+  late int length;
+  late List<List<Map>> keys, card;
 
-  final card = [
-    [{}, {}, {}, {}, {}],
-    [{}, {}, {}, {}, {}],
-    [{}, {}, {}, {}, {}],
-    [{}, {}, {}, {}, {}],
-    [{}, {}, {}, {}, {}],
-    [{}, {}, {}, {}, {}],
-  ];
+  @override
+  void initState() {
+    super.initState();
+    restart();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,22 +35,25 @@ class _GameState extends State<Game> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Flutter Wordle'),
-        actions: length <= 25
-            ? null
-            : [
-                IconButton(
-                  onPressed: () => showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Hint'),
-                      content: Text(
-                        wordle.join(''),
-                      ),
-                    ),
+        actions: [
+          if (length > 25)
+            IconButton(
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Hint'),
+                  content: Text(
+                    wordle.join(''),
                   ),
-                  icon: const Icon(Icons.tips_and_updates_outlined),
-                )
-              ],
+                ),
+              ),
+              icon: const Icon(Icons.tips_and_updates_outlined),
+            ),
+          IconButton(
+            onPressed: restart,
+            icon: const Icon(Icons.restart_alt),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -220,8 +184,10 @@ class _GameState extends State<Game> {
                                             if (listEquals(wordle, guess)) {
                                               showDialog(
                                                 context: context,
-                                                builder: (context) =>
-                                                    WinDialog(card),
+                                                builder: (context) => WinDialog(
+                                                  card,
+                                                  restart: restart,
+                                                ),
                                               );
                                             }
 
@@ -316,5 +282,57 @@ class _GameState extends State<Game> {
         ],
       ),
     );
+  }
+
+  void restart() {
+    wordle = dictionary[Random().nextInt(dictionary.length)].split('');
+    debugPrint(wordle.toString());
+    length = 0;
+    guess = [];
+    keys = [
+      [
+        {'text': 'q'},
+        {'text': 'w'},
+        {'text': 'e'},
+        {'text': 'r'},
+        {'text': 't'},
+        {'text': 'y'},
+        {'text': 'u'},
+        {'text': 'i'},
+        {'text': 'o'},
+        {'text': 'p'},
+      ],
+      [
+        {'text': 'a'},
+        {'text': 's'},
+        {'text': 'd'},
+        {'text': 'f'},
+        {'text': 'g'},
+        {'text': 'h'},
+        {'text': 'j'},
+        {'text': 'k'},
+        {'text': 'l'},
+      ],
+      [
+        {'text': 'back'},
+        {'text': 'z'},
+        {'text': 'x'},
+        {'text': 'c'},
+        {'text': 'v'},
+        {'text': 'b'},
+        {'text': 'n'},
+        {'text': 'm'},
+        {'text': 'enter'},
+      ],
+    ];
+    card = [
+      [{}, {}, {}, {}, {}],
+      [{}, {}, {}, {}, {}],
+      [{}, {}, {}, {}, {}],
+      [{}, {}, {}, {}, {}],
+      [{}, {}, {}, {}, {}],
+      [{}, {}, {}, {}, {}],
+    ];
+    setState(() {});
   }
 }
