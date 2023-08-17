@@ -40,11 +40,12 @@ class KeyBoard extends StatelessWidget {
                             horizontal: 2,
                           ),
                           child: FilledButton.tonal(
-                            onPressed: key['text'] == 'enter'
-                                ? enterPress
-                                : key['text'] == 'back'
-                                    ? backPress
-                                    : () => keyPress(key),
+                            onPressed: switch (key['text']) {
+                              null => null,
+                              'enter' => enterPress,
+                              'back' => backPress,
+                              Object() => () => keyPress(key),
+                            },
                             style: ButtonStyle(
                               padding: const MaterialStatePropertyAll(
                                 EdgeInsets.zero,
@@ -54,38 +55,34 @@ class KeyBoard extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
-                              backgroundColor: key['match'] != null
-                                  ? MaterialStatePropertyAll(
-                                      key['match'] == 'MATCHED'
-                                          ? Colors.green
-                                          : key['match'] == 'PARTIAL'
-                                              ? Colors.yellow
-                                              : key['match'] == 'UNMATCHED'
-                                                  ? Colors.black
-                                                  : null,
-                                    )
-                                  : null,
+                              backgroundColor: MaterialStatePropertyAll(
+                                switch (key['match']) {
+                                  null => null,
+                                  'MATCHED' => Colors.green,
+                                  'PARTIAL' => Colors.yellow,
+                                  'UNMATCHED' => Colors.black,
+                                  Object() => null,
+                                },
+                              ),
                             ),
-                            child: key['text'] == 'enter'
-                                ? const Icon(Icons.keyboard_return)
-                                : key['text'] == 'back'
-                                    ? const Icon(Icons.backspace_outlined)
-                                    : Text(
-                                        key['text']!.toUpperCase(),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 22,
-                                          color: key['match'] == null
-                                              ? null
-                                              : (key['match'] as String) ==
-                                                      'UNMATCHED'
-                                                  ? Colors.white
-                                                  : (key['match'] as String) ==
-                                                          'PARTIAL'
-                                                      ? Colors.black
-                                                      : null,
-                                        ),
-                                      ),
+                            child: switch (key['text']) {
+                              null => null,
+                              'enter' => const Icon(Icons.keyboard_return),
+                              'back' => const Icon(Icons.backspace_outlined),
+                              Object() => Text(
+                                  key['text']!.toUpperCase(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 22,
+                                    color: switch (key['match']) {
+                                      null => null,
+                                      'PARTIAL' => Colors.black,
+                                      'UNMATCHED' => Colors.white,
+                                      Object() => null,
+                                    },
+                                  ),
+                                ),
+                            },
                           ),
                         ),
                       ),

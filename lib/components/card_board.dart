@@ -21,28 +21,25 @@ class CardBoard extends StatelessWidget {
                       width: cardWidth,
                       height: cardWidth,
                       child: Card(
-                        color: e['match'] == null
-                            ? null
-                            : (e['match'] as String) == 'MATCHED'
-                                ? Colors.green
-                                : (e['match'] as String) == 'PARTIAL'
-                                    ? Colors.yellow
-                                    : (e['match'] as String) == 'UNMATCHED'
-                                        ? Colors.black
-                                        : null,
+                        color: switch (e['match']) {
+                          null => null,
+                          'MATCHED' => Colors.green,
+                          'PARTIAL' => Colors.yellow,
+                          'UNMATCHED' => Colors.black,
+                          Object() => null,
+                        },
                         child: Center(
                           child: Text(
                             (e['text'] as String? ?? '').toUpperCase(),
                             style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
-                              color: e['match'] == null
-                                  ? null
-                                  : (e['match'] as String) == 'UNMATCHED'
-                                      ? Colors.white
-                                      : (e['match'] as String) == 'PARTIAL'
-                                          ? Colors.black
-                                          : null,
+                              color: switch (e['match']) {
+                                null => null,
+                                'PARTIAL' => Colors.black,
+                                'UNMATCHED' => Colors.white,
+                                Object() => null,
+                              },
                             ),
                           ),
                         ),
