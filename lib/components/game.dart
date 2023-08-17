@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 
 import '../dictionary.dart';
+import 'card_board.dart';
+import 'key_board.dart';
 import 'loser_dialog.dart';
 import 'win_dialog.dart';
 
@@ -29,15 +31,11 @@ class _GameState extends State<Game> {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    final keyWidth = width / 10;
-    final cardWidth = width / 6;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Flutter Wordle'),
         actions: [
-          if (length > 25)
+          if ((length == 25 && guess.isEmpty) || length > 25)
             IconButton(
               onPressed: () => showDialog(
                 context: context,
@@ -56,129 +54,12 @@ class _GameState extends State<Game> {
           ),
         ],
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: card
-            .map(
-              (e) => Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: e
-                    .map(
-                      (e) => SizedBox(
-                        width: cardWidth,
-                        height: cardWidth,
-                        child: Card(
-                          color: e['match'] == null
-                              ? null
-                              : (e['match'] as String) == 'MATCHED'
-                                  ? Colors.green
-                                  : (e['match'] as String) == 'PARTIAL'
-                                      ? Colors.yellow
-                                      : (e['match'] as String) == 'UNMATCHED'
-                                          ? Colors.black
-                                          : null,
-                          child: Center(
-                            child: Text(
-                              (e['text'] as String? ?? '').toUpperCase(),
-                              style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                color: e['match'] == null
-                                    ? null
-                                    : (e['match'] as String) == 'UNMATCHED'
-                                        ? Colors.white
-                                        : (e['match'] as String) == 'PARTIAL'
-                                            ? Colors.black
-                                            : null,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-            )
-            .toList(),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        height: keyWidth * 1.6 * 3,
-        padding: EdgeInsets.zero,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: keys
-              .map(
-                (k) => Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: k
-                      .map(
-                        (key) => SizedBox(
-                          width: ['enter', 'back'].contains(key['text'])
-                              ? keyWidth * 1.5
-                              : keyWidth,
-                          height: keyWidth * 1.6,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 3,
-                              horizontal: 2,
-                            ),
-                            child: FilledButton.tonal(
-                              onPressed: key['text'] == 'enter'
-                                  ? enterPress
-                                  : key['text'] == 'back'
-                                      ? backPress
-                                      : () => keyPress(key),
-                              style: ButtonStyle(
-                                padding: const MaterialStatePropertyAll(
-                                  EdgeInsets.zero,
-                                ),
-                                shape: MaterialStatePropertyAll(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                backgroundColor: key['match'] != null
-                                    ? MaterialStatePropertyAll(
-                                        key['match'] == 'MATCHED'
-                                            ? Colors.green
-                                            : key['match'] == 'PARTIAL'
-                                                ? Colors.yellow
-                                                : key['match'] == 'UNMATCHED'
-                                                    ? Colors.black
-                                                    : null,
-                                      )
-                                    : null,
-                              ),
-                              child: key['text'] == 'enter'
-                                  ? const Icon(Icons.keyboard_return)
-                                  : key['text'] == 'back'
-                                      ? const Icon(Icons.backspace_outlined)
-                                      : Text(
-                                          key['text']!.toUpperCase(),
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 22,
-                                            color: key['match'] == null
-                                                ? null
-                                                : (key['match'] as String) ==
-                                                        'UNMATCHED'
-                                                    ? Colors.white
-                                                    : (key['match']
-                                                                as String) ==
-                                                            'PARTIAL'
-                                                        ? Colors.black
-                                                        : null,
-                                          ),
-                                        ),
-                            ),
-                          ),
-                        ),
-                      )
-                      .toList(),
-                ),
-              )
-              .toList(),
-        ),
+      body: CardBoard(card: card),
+      bottomNavigationBar: KeyBoard(
+        keys: keys,
+        keyPress: keyPress,
+        enterPress: enterPress,
+        backPress: backPress,
       ),
     );
   }
