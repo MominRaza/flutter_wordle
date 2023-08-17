@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 
 import '../dictionary.dart';
+import 'loser_dialog.dart';
 import 'win_dialog.dart';
 
 class Game extends StatefulWidget {
@@ -305,6 +306,12 @@ class _GameState extends State<Game> {
           card,
           restart: restart,
         ),
+      );
+    } else if (length >= 30) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => LoserDialog(restart: restart),
       );
     }
 
