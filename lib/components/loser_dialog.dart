@@ -10,7 +10,7 @@ class LoserDialog extends StatelessWidget {
     return AlertDialog(
       title: const Text('Loser'),
       actions: [
-        FilledButton.tonal(
+        TextButton(
           onPressed: () {
             restart();
             Navigator.pop(context);

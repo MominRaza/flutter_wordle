@@ -15,12 +15,12 @@ class WinDialog extends StatelessWidget {
     String emoji = '';
     for (var e in card) {
       for (var e in e) {
-        e['match'] == 'MATCHED'
-            ? emoji += '🟩'
+        emoji += e['match'] == 'MATCHED'
+            ? '🟩'
             : e['match'] == 'PARTIAL'
-                ? emoji += '🟨'
+                ? '🟨'
                 : e['match'] == 'UNMATCHED'
-                    ? emoji += '⬛'
+                    ? '⬛'
                     : '';
       }
       emoji += '\n';
@@ -36,7 +36,7 @@ class WinDialog extends StatelessWidget {
           },
           child: const Text('Restart'),
         ),
-        FilledButton.tonal(
+        TextButton(
           onPressed: () {},
           child: const Text('Share'),
         ),

@@ -302,16 +302,22 @@ class _GameState extends State<Game> {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => WinDialog(
-          card,
-          restart: restart,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: WinDialog(
+            card,
+            restart: restart,
+          ),
         ),
       );
     } else if (length >= 30) {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => LoserDialog(restart: restart),
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: LoserDialog(restart: restart),
+        ),
       );
     }
 
