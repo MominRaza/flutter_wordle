@@ -1,12 +1,20 @@
 import 'package:dynamic_color/dynamic_color.dart' show DynamicColorBuilder;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show SystemChrome, SystemUiMode;
+import 'package:flutter/services.dart'
+    show SystemChrome, SystemUiMode, SystemUiOverlayStyle;
 
 import 'screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    systemStatusBarContrastEnforced: false,
+    systemNavigationBarColor: Colors.transparent,
+    systemNavigationBarDividerColor: Colors.transparent,
+    systemNavigationBarContrastEnforced: false,
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -19,10 +27,22 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Wordle',
         theme: ThemeData(
           colorScheme: lightDynamic,
+          appBarTheme: const AppBarTheme(
+            systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarIconBrightness: Brightness.dark,
+              systemNavigationBarIconBrightness: Brightness.dark,
+            ),
+          ),
         ),
         darkTheme: ThemeData(
           colorScheme: darkDynamic,
           brightness: Brightness.dark,
+          appBarTheme: const AppBarTheme(
+            systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarIconBrightness: Brightness.light,
+              systemNavigationBarIconBrightness: Brightness.light,
+            ),
+          ),
         ),
         home: const HomeScreen(),
       ),
