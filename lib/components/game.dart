@@ -1,6 +1,6 @@
-import 'dart:math';
+import 'dart:math' show Random;
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 
 import '../dictionary.dart';
@@ -123,103 +123,10 @@ class _GameState extends State<Game> {
                             ),
                             child: FilledButton.tonal(
                               onPressed: key['text'] == 'enter'
-                                  ? guess.isNotEmpty && guess.length % 5 == 0
-                                      ? () {
-                                          if (!dictionary
-                                              .contains(guess.join())) {
-                                            ScaffoldMessenger.of(context)
-                                                .hideCurrentSnackBar();
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              const SnackBar(
-                                                content: Text(
-                                                  'Not in word list',
-                                                ),
-                                                duration: Duration(
-                                                  seconds: 1,
-                                                ),
-                                                behavior:
-                                                    SnackBarBehavior.floating,
-                                              ),
-                                            );
-                                            return;
-                                          }
-
-                                          for (var i = 0; i < 5; i++) {
-                                            card[(length - 1) ~/ 5][i]
-                                                    ['match'] =
-                                                guess[i] == wordle[i]
-                                                    ? 'MATCHED'
-                                                    : wordle.contains(guess[i])
-                                                        ? 'PARTIAL'
-                                                        : 'UNMATCHED';
-
-                                            for (var element in keys) {
-                                              for (var element in element) {
-                                                if (element['text'] ==
-                                                        guess[i] &&
-                                                    element['match'] !=
-                                                        'MATCHED') {
-                                                  element['match'] =
-                                                      guess[i] == wordle[i]
-                                                          ? 'MATCHED'
-                                                          : wordle.contains(
-                                                                  guess[i])
-                                                              ? 'PARTIAL'
-                                                              : 'UNMATCHED';
-                                                }
-                                              }
-                                            }
-                                          }
-
-                                          if (listEquals(wordle, guess)) {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) => WinDialog(
-                                                card,
-                                                restart: restart,
-                                              ),
-                                            );
-                                          }
-
-                                          setState(() {
-                                            guess = [];
-                                          });
-                                        }
-                                      : null
+                                  ? enterPress
                                   : key['text'] == 'back'
-                                      ? guess.isNotEmpty
-                                          ? () {
-                                              setState(() {
-                                                guess.removeLast();
-                                                card[(length - 1) ~/ 5][
-                                                        ((length % 5) - 1) == -1
-                                                            ? 4
-                                                            : (length % 5) - 1]
-                                                    ['text'] = '';
-                                                length--;
-                                              });
-                                            }
-                                          : null
-                                      : length >= 30
-                                          ? null
-                                          : guess.length == 5
-                                              ? null
-                                              : () {
-                                                  setState(() {
-                                                    guess.add(key['text']!);
-                                                    length++;
-                                                    card[(length - 1) ~/ 5][
-                                                            ((length % 5) -
-                                                                        1) ==
-                                                                    -1
-                                                                ? 4
-                                                                : (length %
-                                                                        5) -
-                                                                    1]['text'] =
-                                                        key['text'];
-                                                  });
-                                                },
+                                      ? backPress
+                                      : () => keyPress(key),
                               style: ButtonStyle(
                                 padding: const MaterialStatePropertyAll(
                                   EdgeInsets.zero,
@@ -325,5 +232,82 @@ class _GameState extends State<Game> {
       [{}, {}, {}, {}, {}],
     ];
     setState(() {});
+  }
+
+  void keyPress(key) {
+    if (length >= 30) return;
+    if (guess.length == 5) return;
+
+    setState(() {
+      guess.add(key['text']!);
+      length++;
+      card[(length - 1) ~/ 5][((length % 5) - 1) == -1 ? 4 : (length % 5) - 1]
+          ['text'] = key['text'];
+    });
+  }
+
+  void backPress() {
+    if (guess.isEmpty) return;
+
+    setState(() {
+      guess.removeLast();
+      card[(length - 1) ~/ 5][((length % 5) - 1) == -1 ? 4 : (length % 5) - 1]
+          ['text'] = '';
+      length--;
+    });
+  }
+
+  void enterPress() {
+    if (guess.isEmpty) return;
+    if (guess.length % 5 != 0) return;
+
+    if (!dictionary.contains(guess.join())) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Not in word list',
+          ),
+          duration: Duration(
+            seconds: 1,
+          ),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    for (var i = 0; i < 5; i++) {
+      card[(length - 1) ~/ 5][i]['match'] = guess[i] == wordle[i]
+          ? 'MATCHED'
+          : wordle.contains(guess[i])
+              ? 'PARTIAL'
+              : 'UNMATCHED';
+
+      for (var element in keys) {
+        for (var element in element) {
+          if (element['text'] == guess[i] && element['match'] != 'MATCHED') {
+            element['match'] = guess[i] == wordle[i]
+                ? 'MATCHED'
+                : wordle.contains(guess[i])
+                    ? 'PARTIAL'
+                    : 'UNMATCHED';
+          }
+        }
+      }
+    }
+
+    if (listEquals(wordle, guess)) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WinDialog(
+          card,
+          restart: restart,
+        ),
+      );
+    }
+
+    setState(() => guess = []);
   }
 }
