@@ -1,3 +1,4 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -13,20 +14,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Wordle',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        brightness: Brightness.light,
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
+    return DynamicColorBuilder(
+      builder: (lightDynamic, darkDynamic) => MaterialApp(
+        title: 'Flutter Wordle',
+        theme: ThemeData(
+          colorScheme: lightDynamic,
+        ),
+        darkTheme: ThemeData(
+          colorScheme: darkDynamic,
           brightness: Brightness.dark,
         ),
-        brightness: Brightness.dark,
+        home: const HomeScreen(),
       ),
-      home: const HomeScreen(),
     );
   }
 }
