@@ -1,7 +1,14 @@
+import 'dart:io' show Platform;
 import 'dart:math' show Random;
 
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart'
+    show
+        InterstitialAd,
+        AdRequest,
+        InterstitialAdLoadCallback,
+        FullScreenContentCallback;
 
 import '../dictionary.dart';
 import 'card_board.dart';
@@ -67,6 +74,9 @@ class _GameState extends State<Game> {
   }
 
   void restart() {
+    if (Platform.isAndroid) {
+      loadAd();
+    }
     wordle = dictionary[Random().nextInt(dictionary.length)].split('');
     debugPrint(wordle.toString());
     length = 0;
@@ -189,7 +199,7 @@ class _GameState extends State<Game> {
           onWillPop: () async => false,
           child: WinDialog(
             card,
-            restart: restart,
+            restart: _interstitialAd != null ? _interstitialAd!.show : restart,
           ),
         ),
       );
@@ -199,11 +209,49 @@ class _GameState extends State<Game> {
         barrierDismissible: false,
         builder: (context) => WillPopScope(
           onWillPop: () async => false,
-          child: LoserDialog(restart: restart),
+          child: LoserDialog(
+            restart: _interstitialAd != null ? _interstitialAd!.show : restart,
+          ),
         ),
       );
     }
 
     setState(() => guess = []);
+  }
+
+  InterstitialAd? _interstitialAd;
+
+  // TODO: replace this test ad unit with your own ad unit.
+  final adUnitId = 'ca-app-pub-3940256099942544/1033173712';
+
+  void loadAd() {
+    InterstitialAd.load(
+      adUnitId: adUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdFailedToShowFullScreenContent: (ad, err) {
+              ad.dispose();
+              _interstitialAd!.dispose();
+              _interstitialAd = null;
+              restart();
+            },
+            onAdDismissedFullScreenContent: (ad) {
+              ad.dispose();
+              _interstitialAd!.dispose();
+              _interstitialAd = null;
+              restart();
+            },
+          );
+
+          debugPrint('$ad loaded.');
+          _interstitialAd = ad;
+        },
+        onAdFailedToLoad: (error) {
+          debugPrint('InterstitialAd failed to load: $error');
+        },
+      ),
+    );
   }
 }
