@@ -7,6 +7,7 @@ import '../dictionary.dart';
 import 'card_board.dart';
 import 'key_board.dart';
 import 'loser_dialog.dart';
+import 'top_ad.dart';
 import 'win_dialog.dart';
 
 class Game extends StatefulWidget {
@@ -53,6 +54,7 @@ class _GameState extends State<Game> {
             icon: const Icon(Icons.restart_alt),
           ),
         ],
+        bottom: const TopAd(),
       ),
       body: CardBoard(card: card),
       bottomNavigationBar: KeyBoard(
