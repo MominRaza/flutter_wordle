@@ -63,7 +63,7 @@ class _GameState extends State<Game> {
   }
 
   void restart() {
-    if (Platform.isAndroid) {
+    if (Platform.isAndroid && _interstitialAd == null) {
       loadAd();
     }
     wordle = dictionary[Random().nextInt(dictionary.length)].split('');
