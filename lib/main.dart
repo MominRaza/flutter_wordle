@@ -1,11 +1,18 @@
+import 'dart:io' show Platform;
+
 import 'package:dynamic_color/dynamic_color.dart' show DynamicColorBuilder;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'
     show SystemChrome, SystemUiMode, SystemUiOverlayStyle;
+import 'package:google_mobile_ads/google_mobile_ads.dart' show MobileAds;
 
 import 'screens/home_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isAndroid) {
+    MobileAds.instance.initialize();
+  }
   runApp(const MyApp());
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
