@@ -12,6 +12,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart'
 
 import '../dictionary.dart';
 import 'card_board.dart';
+import 'hint_button.dart';
 import 'key_board.dart';
 import 'loser_dialog.dart';
 import 'top_ad.dart';
@@ -43,19 +44,7 @@ class _GameState extends State<Game> {
       appBar: AppBar(
         title: const Text('Flutter Wordle'),
         actions: [
-          if ((length == 25 && guess.isEmpty) || length > 25)
-            IconButton(
-              onPressed: () => showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Hint'),
-                  content: Text(
-                    wordle.join(''),
-                  ),
-                ),
-              ),
-              icon: const Icon(Icons.tips_and_updates_outlined),
-            ),
+          HintButton(wordle: wordle),
           IconButton(
             onPressed: restart,
             icon: const Icon(Icons.restart_alt),
