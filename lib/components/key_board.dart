@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show ServicesBinding, KeyDownEvent;
 
-class KeyBoard extends StatelessWidget {
+class KeyBoard extends StatefulWidget {
   const KeyBoard({
     super.key,
     required this.keys,
@@ -14,8 +15,43 @@ class KeyBoard extends StatelessWidget {
   final VoidCallback enterPress, backPress;
 
   @override
+  State<KeyBoard> createState() => _KeyBoardState();
+}
+
+class _KeyBoardState extends State<KeyBoard> {
+  @override
+  void initState() {
+    super.initState();
+
+    ServicesBinding.instance.keyboard.addHandler(
+      (event) {
+        if (event is KeyDownEvent) {
+          switch (event.logicalKey.keyLabel) {
+            case 'Enter' || ' ':
+              widget.enterPress();
+              return true;
+            case 'Backspace' || 'Delete':
+              widget.backPress();
+              return true;
+            default:
+              if (event.logicalKey.keyLabel.length == 1 &&
+                  65 <= event.logicalKey.keyLabel.codeUnitAt(0) &&
+                  event.logicalKey.keyLabel.codeUnitAt(0) <= 90) {
+                widget.keyPress({
+                  'text': event.logicalKey.keyLabel.toLowerCase(),
+                });
+                return true;
+              }
+          }
+        }
+        return false;
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final keyWidth = MediaQuery.sizeOf(context).width / 10;
+    final keyWidth = MediaQuery.sizeOf(context).shortestSide / 10;
 
     return BottomAppBar(
       elevation: 0,
@@ -23,7 +59,7 @@ class KeyBoard extends StatelessWidget {
       padding: EdgeInsets.zero,
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: keys
+        children: widget.keys
             .map(
               (k) => Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -42,9 +78,9 @@ class KeyBoard extends StatelessWidget {
                           child: FilledButton.tonal(
                             onPressed: switch (key['text']) {
                               null => null,
-                              'enter' => enterPress,
-                              'back' => backPress,
-                              Object() => () => keyPress(key),
+                              'enter' => widget.enterPress,
+                              'back' => widget.backPress,
+                              Object() => () => widget.keyPress(key),
                             },
                             style: ButtonStyle(
                               padding: const MaterialStatePropertyAll(

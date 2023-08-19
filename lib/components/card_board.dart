@@ -7,7 +7,7 @@ class CardBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cardWidth = MediaQuery.sizeOf(context).width / 6;
+    final cardWidth = MediaQuery.sizeOf(context).shortestSide / 6;
 
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(vertical: cardWidth / 2),
