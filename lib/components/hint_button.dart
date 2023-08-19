@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'
@@ -41,7 +42,7 @@ class _HintButtonState extends ConsumerState<HintButton> {
           rewardedAd: _rewardedAd,
         ),
       ).then(
-        (_) => Platform.isAndroid ? loadAd() : null,
+        (_) => Platform.isAndroid && _rewardedAd == null ? loadAd() : null,
       ),
       icon: const Icon(Icons.tips_and_updates_outlined),
       label: Text(ref.watch(hintPointProvider).toString()),
@@ -62,9 +63,13 @@ class _HintButtonState extends ConsumerState<HintButton> {
           ad.fullScreenContentCallback = FullScreenContentCallback(
             onAdFailedToShowFullScreenContent: (ad, err) {
               ad.dispose();
+              _rewardedAd?.dispose();
+              _rewardedAd = null;
             },
             onAdDismissedFullScreenContent: (ad) {
               ad.dispose();
+              _rewardedAd?.dispose();
+              _rewardedAd = null;
             },
           );
 
@@ -90,24 +95,50 @@ class _HintDialog extends ConsumerStatefulWidget {
 
 class __HintDialogState extends ConsumerState<_HintDialog> {
   bool _showHint = false;
+  final List<int> random = [
+    Random().nextInt(5),
+    Random().nextInt(5),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Hint'),
+      icon: const Icon(Icons.tips_and_updates_outlined),
+      title: const Text('Wordle Hint'),
       content: _showHint
-          ? Text(
-              widget.wordle.join(''),
+          ? Row(
+              children: widget.wordle
+                  .map(
+                    (e) => Expanded(
+                      child: AspectRatio(
+                        aspectRatio: 1,
+                        child: Card(
+                          color: Colors.green,
+                          child: Center(
+                            child: Text(
+                              random.contains(widget.wordle.indexOf(e))
+                                  ? e.toUpperCase()
+                                  : '',
+                              style: const TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
             )
-          : null,
+          : const Text('Use 5 Points or watch an ad to see a hint.'),
       actions: _showHint
           ? null
           : [
               TextButton.icon(
                 onPressed: widget.rewardedAd != null
                     ? () => widget.rewardedAd!.show(
-                          onUserEarnedReward: (ad, _) {
-                            ad.dispose();
+                          onUserEarnedReward: (_, __) {
                             setState(() => _showHint = true);
                           },
                         )
