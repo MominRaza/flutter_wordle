@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart' show Share;
 
 class WinDialog extends StatelessWidget {
   const WinDialog(
@@ -25,9 +26,10 @@ class WinDialog extends StatelessWidget {
       }
       emoji += '\n';
     }
+    final message = 'Flutter Wordle\n$emoji'.trim();
     return AlertDialog(
       title: const Text('You win'),
-      content: Text('Flutter Worldle\n$emoji'.trim()),
+      content: Text(message),
       actions: [
         TextButton(
           onPressed: () {
@@ -37,7 +39,9 @@ class WinDialog extends StatelessWidget {
           child: const Text('Restart'),
         ),
         TextButton(
-          onPressed: () {},
+          onPressed: () => Share.share(
+            '$message\n\nhttps://mominraza.dev/flutter_wordle',
+          ),
           child: const Text('Share'),
         ),
       ],
