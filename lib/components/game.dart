@@ -3,6 +3,8 @@ import 'dart:math' show Random;
 
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'
+    show ConsumerStatefulWidget, ConsumerState;
 import 'package:google_mobile_ads/google_mobile_ads.dart'
     show
         InterstitialAd,
@@ -11,6 +13,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart'
         FullScreenContentCallback;
 
 import '../dictionary.dart';
+import '../providers/hint_point.dart';
 import 'card_board.dart';
 import 'hint_button.dart';
 import 'key_board.dart';
@@ -18,16 +21,16 @@ import 'loser_dialog.dart';
 import 'top_ad.dart';
 import 'win_dialog.dart';
 
-class Game extends StatefulWidget {
+class Game extends ConsumerStatefulWidget {
   const Game({
     super.key,
   });
 
   @override
-  State<Game> createState() => _GameState();
+  ConsumerState<Game> createState() => _GameState();
 }
 
-class _GameState extends State<Game> {
+class _GameState extends ConsumerState<Game> {
   late List<String> wordle, guess;
   late int length;
   late List<List<Map>> keys, card;
@@ -192,6 +195,9 @@ class _GameState extends State<Game> {
           ),
         ),
       );
+      ref.read(hintPointProvider.notifier).win(
+            6 - (length ~/ 5),
+          );
     } else if (length >= 30) {
       showDialog(
         context: context,

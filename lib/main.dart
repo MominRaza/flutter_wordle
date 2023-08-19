@@ -4,6 +4,7 @@ import 'package:dynamic_color/dynamic_color.dart' show DynamicColorBuilder;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'
     show SystemChrome, SystemUiMode, SystemUiOverlayStyle;
+import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 import 'package:google_mobile_ads/google_mobile_ads.dart' show MobileAds;
 
 import 'screens/home_screen.dart';
@@ -13,7 +14,6 @@ void main() {
   if (Platform.isAndroid) {
     MobileAds.instance.initialize();
   }
-  runApp(const MyApp());
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
@@ -22,6 +22,12 @@ void main() {
     systemNavigationBarDividerColor: Colors.transparent,
     systemNavigationBarContrastEnforced: false,
   ));
+
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

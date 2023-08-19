@@ -1,6 +1,8 @@
 import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'
+    show ConsumerStatefulWidget, ConsumerState;
 import 'package:google_mobile_ads/google_mobile_ads.dart'
     show
         RewardedAd,
@@ -8,22 +10,25 @@ import 'package:google_mobile_ads/google_mobile_ads.dart'
         RewardedAdLoadCallback,
         FullScreenContentCallback;
 
-class HintButton extends StatefulWidget {
+import '../providers/hint_point.dart';
+
+class HintButton extends ConsumerStatefulWidget {
   const HintButton({super.key, required this.wordle});
 
   final List<String> wordle;
 
   @override
-  State<HintButton> createState() => _HintButtonState();
+  ConsumerState<HintButton> createState() => _HintButtonState();
 }
 
-class _HintButtonState extends State<HintButton> {
+class _HintButtonState extends ConsumerState<HintButton> {
   @override
   void initState() {
     super.initState();
     if (Platform.isAndroid) {
       loadAd();
     }
+    ref.read(hintPointProvider.notifier).load();
   }
 
   @override
@@ -39,7 +44,7 @@ class _HintButtonState extends State<HintButton> {
         (_) => Platform.isAndroid ? loadAd() : null,
       ),
       icon: const Icon(Icons.tips_and_updates_outlined),
-      label: const Text('0'),
+      label: Text(ref.watch(hintPointProvider).toString()),
     );
   }
 
@@ -74,16 +79,16 @@ class _HintButtonState extends State<HintButton> {
   }
 }
 
-class _HintDialog extends StatefulWidget {
+class _HintDialog extends ConsumerStatefulWidget {
   const _HintDialog({required this.wordle, required this.rewardedAd});
 
   @override
-  State<_HintDialog> createState() => __HintDialogState();
+  ConsumerState<_HintDialog> createState() => __HintDialogState();
   final List<String> wordle;
   final RewardedAd? rewardedAd;
 }
 
-class __HintDialogState extends State<_HintDialog> {
+class __HintDialogState extends ConsumerState<_HintDialog> {
   bool _showHint = false;
 
   @override
@@ -108,11 +113,16 @@ class __HintDialogState extends State<_HintDialog> {
                         )
                     : null,
                 icon: const Icon(Icons.ad_units),
-                label: const Text('Watch Ad Free'),
+                label: const Text('Free'),
               ),
               TextButton(
-                onPressed: () => setState(() => _showHint = true),
-                child: const Text('\$5'),
+                onPressed: ref.watch(hintPointProvider) >= 5
+                    ? () {
+                        ref.read(hintPointProvider.notifier).showHint();
+                        setState(() => _showHint = true);
+                      }
+                    : null,
+                child: const Text('5 Points'),
               ),
             ],
     );
