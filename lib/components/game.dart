@@ -206,6 +206,7 @@ class _GameState extends ConsumerState<Game> {
           onWillPop: () async => false,
           child: LoserDialog(
             restart: _interstitialAd != null ? _interstitialAd!.show : restart,
+            wordle: wordle,
           ),
         ),
       );
