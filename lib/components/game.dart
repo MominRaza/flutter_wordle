@@ -165,9 +165,13 @@ class _GameState extends ConsumerState<Game> {
     }
 
     for (var i = 0; i < 5; i++) {
+      final lengthDiff = guess.where((e) => e == guess[i]).length -
+          wordle.where((e) => e == guess[i]).length;
+
       card[(length - 1) ~/ 5][i]['match'] = guess[i] == wordle[i]
           ? 'MATCHED'
-          : wordle.contains(guess[i])
+          : wordle.contains(guess[i]) &&
+                  (lengthDiff <= 0 || guess.indexOf(guess[i]) + lengthDiff >= i)
               ? 'PARTIAL'
               : 'UNMATCHED';
 
