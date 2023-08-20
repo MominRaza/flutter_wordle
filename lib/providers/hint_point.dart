@@ -17,12 +17,12 @@ class HintPoint extends StateNotifier<int> {
   }
 
   void showHint() {
-    state -= 5;
+    state -= 1;
     pref.setInt('hintPoint', state);
   }
 
   Future<void> load() async {
     pref = await SharedPreferences.getInstance();
-    state = pref.getInt('hintPoint') ?? 0;
+    state = pref.getInt('hintPoint') ?? 2;
   }
 }

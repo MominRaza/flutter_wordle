@@ -153,7 +153,7 @@ class __HintDialogState extends ConsumerState<_HintDialog> {
                         setState(() => _showHint = true);
                       }
                     : null,
-                child: const Text('5 Points'),
+                child: const Text('1 Point'),
               ),
             ],
     );
