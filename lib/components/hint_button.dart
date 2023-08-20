@@ -131,7 +131,7 @@ class __HintDialogState extends ConsumerState<_HintDialog> {
                   )
                   .toList(),
             )
-          : const Text('Use 5 Points or watch an ad to see a hint.'),
+          : const Text('Use 1 Hint Point or Watch an Ad to see a hint.'),
       actions: _showHint
           ? null
           : [
