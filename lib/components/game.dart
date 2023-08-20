@@ -34,6 +34,7 @@ class _GameState extends ConsumerState<Game> {
   late List<String> wordle, guess;
   late int length;
   late List<List<Map>> keys, card;
+  late bool winner;
 
   @override
   void initState() {
@@ -117,12 +118,12 @@ class _GameState extends ConsumerState<Game> {
       [{}, {}, {}, {}, {}],
       [{}, {}, {}, {}, {}],
     ];
+    winner = false;
     setState(() {});
   }
 
   void keyPress(key) {
-    if (length >= 30) return;
-    if (guess.length == 5) return;
+    if (length >= 30 || guess.length == 5 || winner) return;
 
     setState(() {
       guess.add(key['text']!);
@@ -198,6 +199,7 @@ class _GameState extends ConsumerState<Game> {
       ref.read(hintPointProvider.notifier).win(
             6 - (length ~/ 5),
           );
+      winner = true;
     } else if (length >= 30) {
       showDialog(
         context: context,
