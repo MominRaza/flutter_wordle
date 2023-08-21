@@ -147,7 +147,7 @@ class __HintDialogState extends ConsumerState<_HintDialog> {
                 label: const Text('Free'),
               ),
               TextButton(
-                onPressed: ref.watch(hintPointProvider) >= 5
+                onPressed: ref.watch(hintPointProvider) >= 1
                     ? () {
                         ref.read(hintPointProvider.notifier).showHint();
                         setState(() => _showHint = true);
