@@ -171,7 +171,7 @@ class _GameState extends ConsumerState<Game> {
       card[(length - 1) ~/ 5][i]['match'] = guess[i] == wordle[i]
           ? 'MATCHED'
           : wordle.contains(guess[i]) &&
-                  (lengthDiff <= 0 || guess.indexOf(guess[i]) + lengthDiff >= i)
+                  (lengthDiff == 0 || guess.indexOf(guess[i]) + lengthDiff > i)
               ? 'PARTIAL'
               : 'UNMATCHED';
 
